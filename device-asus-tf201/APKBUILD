@@ -1,0 +1,31 @@
+# Reference: <https://postmarketos.org/devicepkg>
+pkgname=device-asus-tf201
+pkgdesc="Asus Transformer Prime TF201"
+pkgver=0.1
+pkgrel=0
+url="https://postmarketos.org"
+license="MIT"
+arch="armv7"
+options="!check !archcheck"
+depends="postmarketos-base linux-asus-tf201 mkbootimg mesa-dri-gallium"
+makedepends="devicepkg-dev"
+subpackages="$pkgname-nonfree-firmware:nonfree_firmware"
+source="deviceinfo"
+
+build() {
+	devicepkg_build $startdir $pkgname
+}
+
+package() {
+	devicepkg_package $startdir $pkgname
+}
+
+nonfree_firmware() {
+	pkgdesc="Asus Transformer Prime TF201 WiFi"
+	depends="firmware-aosp-broadcom-wlan-mainline"
+
+	mkdir "$subpkgdir"
+}
+
+
+sha512sums="(run 'pmbootstrap checksum device-asus-tf201' to fill)"
