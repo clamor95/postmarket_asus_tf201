@@ -1368,15 +1368,15 @@
 	};
 
 	panel: panel {
-		compatible = "innolux,n101icg-l21", "innolux,g101ice-l01", "simple-panel";	/* Panel manufacturer for TF201 is unknown */
+		compatible = "hannstar,hsd070pww1", "simple-panel";		/* HSD101PWW2 Rev0-A00/A01 */
 
 		power-supply = <&vdd_pnl1_reg>;
 		enable-gpios = <&gpio TEGRA_GPIO(N, 6) GPIO_ACTIVE_HIGH>;
-
 		backlight = <&backlight>;
-	};
 
-	display-panel {
+		width-mm = <151>;
+		height-mm = <94>;
+
 		panel-timing {
 			clock-frequency = <68000000>;
 			hactive = <1280>;
