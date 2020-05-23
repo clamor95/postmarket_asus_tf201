@@ -74,7 +74,13 @@
 		lcd: dc@54200000 {
 			rgb {
 				status = "okay";
-				nvidia,panel = <&panel>;
+
+				port@0 {
+					lcd_output: endpoint {
+						remote-endpoint = <&lvds_encoder_input>;
+						bus-width = <24>;
+					};
+				};
 			};
 		};
 
@@ -1321,7 +1327,7 @@
 		non-removable;
 	};
 
-	backlight: backlight {
+	backlight_lvds: backlight-lvds {
 		compatible = "pwm-backlight";
 
 		enable-gpios = <&gpio TEGRA_GPIO(H, 2) GPIO_ACTIVE_HIGH>;
@@ -1367,26 +1373,46 @@
 		};
 	};
 
-	panel: panel {
-		compatible = "hannstar,hsd070pww1", "simple-panel";		/* HSD101PWW2 Rev0-A00/A01 */
+	display-panel {
+		compatible = "hannstar,hsd070pww1", "panel-lvds";		/* HSD101PWW2 Rev0-A00/A01 */
 
 		power-supply = <&vdd_pnl1_reg>;
-		enable-gpios = <&gpio TEGRA_GPIO(N, 6) GPIO_ACTIVE_HIGH>;
-		backlight = <&backlight>;
+		backlight = <&backlight_lvds>;
 
-		width-mm = <151>;
-		height-mm = <94>;
+		width-mm = <136>;			/* hsd101pww2 panel has same properties as */
+		height-mm = <217>;			/* hsd070pww1, only difference is physical size */
 
-		panel-timing {
-			clock-frequency = <68000000>;
-			hactive = <1280>;
-			vactive = <800>;
-			hfront-porch = <48>;
-			hback-porch = <18>;
-			hsync-len = <30>;
-			vsync-len = <5>;
-			vfront-porch = <3>;
-			vback-porch = <12>;
+		port {
+			panel_input: endpoint {
+				remote-endpoint = <&lvds_encoder_output>;
+			};
+		};
+	};
+
+	lvds-encoder {
+		compatible = "ti,sn75lvds83", "lvds-encoder";
+
+		powerdown-gpios = <&gpio TEGRA_GPIO(N, 6) GPIO_ACTIVE_LOW>;
+
+		ports {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			port@0 {
+				reg = <0>;
+
+				lvds_encoder_input: endpoint {
+					remote-endpoint = <&lcd_output>;
+				};
+			};
+
+			port@1 {
+				reg = <1>;
+
+				lvds_encoder_output: endpoint {
+					remote-endpoint = <&panel_input>;
+				};
+			};
 		};
 	};
 
