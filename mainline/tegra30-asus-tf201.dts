@@ -1282,13 +1282,6 @@
 		power-off-delay-us = <300>;
 	};
 
-	emmc_pwrseq: emmc-pwrseq {
-		compatible = "mmc-pwrseq-emmc";
-
-		reset-gpios = <&gpio TEGRA_GPIO(CC, 0) GPIO_ACTIVE_LOW>;
-		status = "disabled";
-	};
-
 	/* uSD slot on left side */
 	sdhci@78000000 {		/* sdmmc1 */
 		status = "okay";
@@ -1310,9 +1303,6 @@
 		keep-power-in-suspend;
 		bus-width = <4>;
 		non-removable;
-		no-sd;
-		no-mmc;
-		enable-sdio-wakeup;
 
 		mmc-pwrseq = <&brcm_wifi_pwrseq>;
 		vmmc-supply = <&vdd_3v3_sys>;
