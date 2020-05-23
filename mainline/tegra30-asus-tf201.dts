@@ -891,6 +891,7 @@
 		compatible = "nvidia,tegra30-hsuart";
 		status = "okay";
 
+		/* Broadcom GPS BCM47511 */
 		gnss {
 			compatible = "gps,nmea";
 			vcc-supply = <&gps_en_reg>;
@@ -901,7 +902,7 @@
 		compatible = "nvidia,tegra30-hsuart";
 		status = "okay";
 
-		/* BCM4329B1 */
+		/* Azurewave AW-NH615 BCM4329B1 */
 		bluetooth {
 			compatible = "brcm,bcm4329-bt";
 
@@ -920,6 +921,7 @@
 		status = "okay";
 		clock-frequency = <100000>;
 
+		/* Fortemedia FM34NE voice processor */
 		dsp@60 {
 			compatible = "fortemedia,fm34";
 			reg = <0x60>;
@@ -933,6 +935,7 @@
 		status = "okay";
 		clock-frequency = <400000>;
 
+		/* Atmel MXT768E touchscreen */
 		touchscreen@4d {
 			compatible = "atmel,maxtouch";
 			reg = <0x4d>;
@@ -941,6 +944,7 @@
 			reset-gpios = <&gpio TEGRA_GPIO(H, 6) GPIO_ACTIVE_LOW>;		/* touch_reset, out, hi */
 		};
 
+		/* Nuvoton NPCE795LA0BX embedded controller */
 		asusec@15 {
 			compatible = "asus,pad-ec", "asus,ec";
 			reg = <0x15>;
@@ -949,6 +953,7 @@
 			request-gpio = <&gpio TEGRA_GPIO(Q, 1) GPIO_ACTIVE_LOW>;	/* asuspec_request, out, hi */
 			asus,dockram = <&dockram_pec>;
 
+			/* Texas Instruments bq24725 SMBus Charge Controller */
 			pad_battery: battery {
 //				power-supplies = <&dock_battery>;
 				charge-full-design = <2940>;	/* mAh */
@@ -986,6 +991,7 @@
 		status = "okay";
 		clock-frequency = <100000>;
 
+		/* Dynaimage ambient light sensor */
 		light-sensor@1c {
 			compatible = "dynaimage,al3010";
 			reg = <0x1c>;
@@ -996,6 +1002,7 @@
 			vdd-supply = <&vdd_3v3_sys>;
 		};
 
+		/* Rear camera Fujitsu MBG048 image processor */
 		back_camera: camera@1f {
 			compatible = "fujitsu,m6mo";
 			reg = <0x1f>;
@@ -1076,6 +1083,7 @@
 					  <&gpio TEGRA_GPIO(CC, 2) IRQ_TYPE_EDGE_FALLING>;	// temp_alert, in, hi	[LEVEL_LOW]
 		interrupt-names = "irq", "smbus_alert";
 
+		/* Realtek ALC5631 audio codec */
 		rt5631: rt5631@1a {
 			compatible = "realtek,rt5631";
 			reg = <0x1a>;
@@ -1090,6 +1098,7 @@
 			#thermal-sensor-cells = <1>;
 		};
 
+		/* Texas Instruments TPS659110 PMIC */
 		pmic: pmic@2d {
 			compatible = "ti,tps65911";
 			reg = <0x2d>;
@@ -1309,6 +1318,7 @@
 		vmmc-supply = <&vdd_3v3_sys>;
 		vqmmc-supply = <&vdd_1v8>;
 
+		/* Azurewave AW-NH615 BCM4329 */
 		wifi@1 {
 			reg = <1>;
 			compatible = "brcm,bcm4329-fmac";
@@ -1318,7 +1328,7 @@
 		};
 	};
 
-	/* internal eMMC */
+	/* internal eMMC Kingston KE4BT5D6A or Hynix H26M64002BNR */
 	sdhci@78000600 {		/* sdmmc4 */
 		status = "okay";
 		bus-width = <8>;
@@ -1373,8 +1383,9 @@
 		};
 	};
 
+	/* HannStar HSD101PWW2 Rev0-A00/A01 LCD SuperIPS+ HD panel */
 	display-panel {
-		compatible = "hannstar,hsd070pww1", "panel-lvds";		/* HSD101PWW2 Rev0-A00/A01 */
+		compatible = "hannstar,hsd070pww1", "panel-lvds";
 
 		power-supply = <&vdd_pnl1_reg>;
 		backlight = <&backlight_lvds>;
@@ -1389,6 +1400,8 @@
 		};
 	};
 
+	/* Texas Instruments SN75LVDS83B LVDS Transmitter */
+	/* NOTE: datasheet also mentions about THine TH133B LVDS Transmitter */
 	lvds-encoder {
 		compatible = "ti,sn75lvds83", "lvds-encoder";
 
