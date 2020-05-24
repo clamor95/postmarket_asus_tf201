@@ -89,9 +89,9 @@
 
 		hdmi@54280000 {
 			status = "okay";
-			hdmi-supply = <&hdmi_5v_con>;
-			pll-supply = <&avdd_hdmi_pll_1v8_reg>;
-			vdd-supply = <&avdd_hdmi_3v3_reg>;
+			hdmi-supply = <&vdd_5v0_sys>;
+			pll-supply = <&vdd_1v8>;
+			vdd-supply = <&vdd_3v3_sys>;
 
 			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;	// hdmi_hpd, in, lo
 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
@@ -894,7 +894,7 @@
 		/* Broadcom GPS BCM47511 */
 		gnss {
 			compatible = "gps,nmea";
-			vcc-supply = <&gps_en_reg>;
+			vcc-supply = <&vdd_3v3_sys>;
 		};
 	};
 
@@ -936,8 +936,8 @@
 		dsp@60 {
 			compatible = "fortemedia,fm34";
 			reg = <0x60>;
-			vddc-supply = <&dsp_1v8_reg>;
-			vdda-supply = <&dsp_reg>;									/* fm34_power_down */
+			vddc-supply = <&vdd_1v8>;
+			vdda-supply = <&vdd_1v8>;									/* fm34_power_down */
 			reset-gpios = <&gpio TEGRA_GPIO(O, 3) GPIO_ACTIVE_LOW>;		/* fm34_reset, out, hi */
 		};
 	};
@@ -1028,8 +1028,8 @@
 			clocks = <>; 						// <&tegra_car TEGRA30_CLK_PLL_A>; CAM_MCLK
 			clock-names = "extclk";
 
-			vddio-suppy = <&cam_1v8_reg>;
-			vdda-suppy = <&vdd_cam3_ldo_reg>;	// 2.85V?
+			vddio-suppy = <&vdd_1v8>;
+			vdda-suppy = <&vdd_3v3_sys>;			// 2.85V?
 			vddc-supply = <&cam_vddc>;			// PWR_DN
 
 			reset-gpios = <&gpio TEGRA_GPIO(O, 0) GPIO_ACTIVE_LOW>;
@@ -1255,9 +1255,52 @@
 	};
 
 	regulators {
+		compatible = "simple-bus";
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		vdd_5v0_sys: regulator@0 {
+			compatible = "regulator-fixed";
+			reg = <0>;
+			regulator-name = "vdd_5v0";
+			regulator-min-microvolt = <5000000>;
+			regulator-max-microvolt = <5000000>;
+			regulator-always-on;
+			regulator-boot-on;
+		};
+
 		vdd_3v3_sys: regulator@1 {
-			gpio = <&pmic 7 GPIO_ACTIVE_HIGH>;
+			compatible = "regulator-fixed";
+			reg = <1>;
+			regulator-name = "vdd_3v3";
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
+			regulator-always-on;
+			regulator-boot-on;
+			vin-supply = <&vdd_5v0_sys>;
+		};
+
+		vdd_pnl: regulator@2 {
+			compatible = "regulator-fixed";
+			reg = <2>;
+			regulator-name = "vdd_panel";
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
+			regulator-enable-ramp-delay = <300000>;
+			gpio = <&gpio TEGRA_GPIO(W, 1) GPIO_ACTIVE_HIGH>;
 			enable-active-high;
+			vin-supply = <&vdd_3v3_sys>;
+		};
+
+		cam_vddc: regulator@3 {
+			compatible = "regulator-fixed";
+			reg = <3>;
+			regulator-name = "camera_vddc";
+			regulator-min-microvolt = <1200000>;
+			regulator-max-microvolt = <1200000>;
+			gpio = <&gpio TEGRA_GPIO(BB, 7) GPIO_ACTIVE_HIGH>;
+			enable-active-high;
+			vin-supply = <&vdd2_reg>;
 		};
 	};
 
@@ -1378,7 +1421,7 @@
 		compatible = "pwm-backlight";
 
 		enable-gpios = <&gpio TEGRA_GPIO(H, 2) GPIO_ACTIVE_HIGH>;
-		power-supply = <&vdd_bl_reg>;
+		power-supply = <&vdd_5v0_sys>;
 		pwms = <&pwm 0 5000000>;
 
 		brightness-levels = <2 4 8 16 32 64 128 255>;
@@ -1424,7 +1467,7 @@
 	display-panel {
 		compatible = "hannstar,hsd070pww1", "panel-lvds";
 
-		power-supply = <&vdd_pnl1_reg>;
+		power-supply = <&vdd_pnl>;
 		backlight = <&backlight_lvds>;
 
 		width-mm = <136>;			/* hsd101pww2 panel has same properties as */
@@ -1622,262 +1665,6 @@
 		detect-gpios = <&gpio TEGRA_GPIO(U, 4) GPIO_ACTIVE_LOW>;		// asusdec_dock_in, in, lo [in-dock]
 
 		i2c-parent = <&i2c2>;
-	};
-
-	/* Fixed regulstors must be reworked */
-	regulators {
-		compatible = "simple-bus";
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		cp_5v_reg: regulator@0 {	// -> vdd_5v0_sby, vdd_hall, vterm_ddr, v2ref_ddr
-			compatible = "regulator-fixed";
-			reg = <0>;
-			regulator-name = "cp_5v";
-			regulator-min-microvolt = <5000000>;
-			regulator-max-microvolt = <5000000>;
-			regulator-always-on;
-			regulator-boot-on;
-			enable-active-high;
-			gpio = <&pmic 0 GPIO_ACTIVE_HIGH>;
-			vin-supply = <&vdd_ac_bat_reg>;
-		};
-
-		vdd_5v0_reg: regulator@1 {	// -> vdd_5v0_sys
-			compatible = "regulator-fixed";
-			reg = <1>;
-			regulator-name = "5v0";
-			regulator-min-microvolt = <5000000>;
-			regulator-max-microvolt = <5000000>;
-			regulator-always-on;
-			regulator-boot-on;
-			enable-active-high;
-			gpio = <&pmic 8 GPIO_ACTIVE_HIGH>;	// Cardhu-A04+; PM269
-			vin-supply = <&vdd_ac_bat_reg>;
-		};
-
-		wifi_3v3_reg: regulator@21 {
-			compatible = "regulator-fixed";
-			reg = <21>;
-			regulator-name = "wifi_3v3";
-			regulator-min-microvolt = <3300000>;
-			regulator-max-microvolt = <3300000>;
-			enable-active-high;
-			gpio = <&gpio TEGRA_GPIO(D, 4) GPIO_ACTIVE_HIGH>;	// wlan_power, out, lo [wifi-off]
-			vin-supply = <&sys_3v3_reg>;
-		};
-
-		gps_en_reg: regulator@23 {
-			compatible = "regulator-fixed";
-			reg = <23>;
-			regulator-name = "gps_en";
-			regulator-min-microvolt = <3300000>;
-			regulator-max-microvolt = <3300000>;
-			enable-active-high;
-			gpio = <&gpio TEGRA_GPIO(U, 2) GPIO_ACTIVE_HIGH>;	// gpsconfig.xml: gpioNStdby
-			vin-supply = <&sys_3v3_reg>;
-		};
-
-		vdd_cam1_ldo_reg: regulator@18 {
-			compatible = "regulator-fixed";
-			reg = <18>;
-			regulator-name = "vdd_cam1_ldo";
-			regulator-min-microvolt = <2800000>;
-			regulator-max-microvolt = <2800000>;
-			enable-active-high;
-			gpio = <&gpio TEGRA_GPIO(R, 6) GPIO_ACTIVE_HIGH>;	// fixed_reg_cam1_ldo_e, out, lo
-			vin-supply = <&sys_3v3_reg>;
-		};
-
-		vdd_ddr_reg: regulator@2 {
-			compatible = "regulator-fixed";
-			reg = <2>;
-			regulator-name = "vdd_ddr";
-			regulator-min-microvolt = <1500000>;
-			regulator-max-microvolt = <1500000>;
-			regulator-always-on;
-			regulator-boot-on;
-			enable-active-high;
-			gpio = <&pmic 7 GPIO_ACTIVE_HIGH>;	// Cardhu-A04+, PM269
-			// vin-supply = null?
-		};
-
-		sys_3v3_reg: regulator@3 {	// -> mem_vddio_ddr, t30_vddio_ddr
-			compatible = "regulator-fixed";
-			reg = <3>;
-			regulator-name = "sys_3v3";
-			regulator-min-microvolt = <3300000>;
-			regulator-max-microvolt = <3300000>;
-			regulator-always-on;
-			regulator-boot-on;
-			enable-active-high;
-			gpio = <&pmic 6 GPIO_ACTIVE_HIGH>;	// Cardhu-A04+, PM269
-		};
-
-		vdd_bl_reg: regulator@4 {
-			compatible = "regulator-fixed";
-			reg = <4>;
-			regulator-name = "vdd_bl";
-			regulator-min-microvolt = <5000000>;
-			regulator-max-microvolt = <5000000>;
-			regulator-boot-on;
-			enable-active-high;
-				// OD? o=1 i=0 ?
-			gpio = <&gpio TEGRA_GPIO(H, 3) GPIO_ACTIVE_HIGH>;	// fixed_reg_en_vdd_bl, PM269
-//			vin-supply = <&vdd_5v0_reg>; // = null?
-		};
-
-		modem_3v3_reg: regulator@5 {
-			compatible = "regulator-fixed";
-			reg = <5>;
-			regulator-name = "modem_3v3";
-			regulator-min-microvolt = <3300000>;
-			regulator-max-microvolt = <3300000>;
-			enable-active-high;
-			gpio = <&gpio TEGRA_GPIO(D, 6) GPIO_ACTIVE_HIGH>;
-//			vin-supply = <&sys_3v3_reg>; // = null?
-		};
-
-		vdd_pnl1_reg: regulator@6 {
-			compatible = "regulator-fixed";
-			reg = <6>;
-			regulator-name = "vdd_pnl1";
-			regulator-min-microvolt = <3300000>;
-			regulator-max-microvolt = <3300000>;
-			regulator-boot-on;
-			enable-active-high;
-			gpio = <&gpio TEGRA_GPIO(W, 1) GPIO_ACTIVE_HIGH>;	// fixed_reg_en_vdd_pnl, out, hi; PM269
-			vin-supply = <&sys_3v3_reg>;
-		};
-
-		vdd_cam3_ldo_reg: regulator@7 {
-			compatible = "regulator-fixed";
-			reg = <7>;
-			regulator-name = "vdd_cam3_ldo";
-			regulator-min-microvolt = <3300000>;
-			regulator-max-microvolt = <3300000>;
-			enable-active-high;
-			gpio = <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_HIGH>;	// fixed_reg_cam3_ldo_e, out, lo
-			vin-supply = <&sys_3v3_reg>;
-		};
-
-		vdd_com_reg: regulator@8 {
-			compatible = "regulator-fixed";
-			reg = <8>;
-			regulator-name = "vdd_com";
-			regulator-min-microvolt = <3300000>;
-			regulator-max-microvolt = <3300000>;
-			enable-active-high;
-			gpio = <&gpio TEGRA_GPIO(D, 0) GPIO_ACTIVE_HIGH>;
-			vin-supply = <&sys_3v3_reg>;
-		};
-
-		vdd_fuse_3v3_reg: regulator@9 {
-			compatible = "regulator-fixed";
-			reg = <9>;
-			regulator-name = "vdd_fuse_3v3";
-			regulator-min-microvolt = <3300000>;
-			regulator-max-microvolt = <3300000>;
-			enable-active-high;
-			gpio = <&gpio TEGRA_GPIO(C, 1) GPIO_ACTIVE_HIGH>;	// PM269
-			vin-supply = <&sys_3v3_reg>;
-		};
-
-		cam_vddc: regulator@100 {
-			compatible = "regulator-fixed";
-			reg = <100>;
-			regulator-name = "icatch7002a_vddc";
-			regulator-min-microvolt = <1200000>;
-			regulator-max-microvolt = <1200000>;
-			enable-active-high;
-			gpio = <&gpio TEGRA_GPIO(BB, 7) GPIO_ACTIVE_HIGH>;	// cam_vddc_ldo_en, out, lo
-			// vin-supply = vdd2?
-		};
-
-		hdmi_5v_con: regulator@101 {
-			compatible = "regulator-fixed";
-			reg = <101>;
-			regulator-name = "hdmi_con_5v";
-			regulator-min-microvolt = <5000000>;
-			regulator-max-microvolt = <5000000>;
-			gpio = <&gpio TEGRA_GPIO(P, 2) GPIO_ACTIVE_HIGH>;	// hdmi_5v_en, out, hi
-			vin-supply = <&vdd_5v0_reg>;
-		};
-
-		avdd_hdmi_pll_1v8_reg: regulator@102 {
-			compatible = "regulator-fixed";
-			reg = <102>;
-			regulator-name = "avdd_hdmi_pll";
-			regulator-min-microvolt = <1800000>;
-			regulator-max-microvolt = <1800000>;
-			// gpio = ?
-			vin-supply = <&vio_reg>;
-		};
-
-		avdd_hdmi_3v3_reg: regulator@103 {
-			compatible = "regulator-fixed";
-			reg = <103>;
-			regulator-name = "avdd_hdmi";
-			regulator-min-microvolt = <3300000>;
-			regulator-max-microvolt = <3300000>;
-			enable-active-high;
-			gpio = <&gpio TEGRA_GPIO(T, 0) GPIO_ACTIVE_HIGH>;
-			vin-supply = <&sys_3v3_reg>;
-		};
-
-		cam_1v8_reg: regulator@104 {
-			compatible = "regulator-fixed";
-			reg = <104>;
-			regulator-name = "cam_1v8";
-			regulator-min-microvolt = <1800000>;
-			regulator-max-microvolt = <1800000>;
-			enable-active-high;
-			gpio = <&gpio TEGRA_GPIO(BB, 4) GPIO_ACTIVE_HIGH>;	// cam_vddio_ldo_en, out, lo
-			vin-supply = <&vio_reg>;
-		};
-
-		vdd_ac_bat_reg: regulator@107 {
-			compatible = "regulator-fixed";
-			reg = <107>;
-			regulator-name = "vdd_ac_bat";
-			regulator-min-microvolt = <5000000>;
-			regulator-max-microvolt = <5000000>;
-			regulator-boot-on;
-			regulator-always-on;
-		};
-
-		dsp_1v8_reg: regulator@108 {
-			compatible = "regulator-fixed";
-			reg = <108>;
-			regulator-name = "dsp_1v8";
-			regulator-min-microvolt = <1800000>;
-			regulator-max-microvolt = <1800000>;
-			enable-active-high;
-			gpio = <&gpio TEGRA_GPIO(P, 3) GPIO_ACTIVE_HIGH>;	// dsp_power_1v8_en, out, hi
-			vin-supply = <&vio_reg>;
-		};
-
-		cam_isp_reg: regulator@109 {
-			compatible = "regulator-fixed";
-			reg = <109>;
-			regulator-name = "isp_power";
-			regulator-min-microvolt = <1800000>;
-			regulator-max-microvolt = <1800000>;
-			enable-active-high;
-			gpio = <&gpio TEGRA_GPIO(BB, 5) GPIO_ACTIVE_HIGH>;	// cam_power_dwn, out, lo
-			vin-supply = <&sys_3v3_reg>;
-		};
-
-		dsp_reg: regulator@110 {
-			compatible = "regulator-fixed";
-			reg = <110>;
-			regulator-name = "dsp_power";
-			regulator-min-microvolt = <1800000>;
-			regulator-max-microvolt = <1800000>;
-			enable-active-high;
-			gpio = <&gpio TEGRA_GPIO(BB, 6) GPIO_ACTIVE_HIGH>;	// fm34_pwdn, out, lo
-			vin-supply = <&sys_3v3_reg>;
-		};
 	};
 };
 
