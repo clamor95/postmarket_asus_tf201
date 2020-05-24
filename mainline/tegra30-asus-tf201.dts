@@ -902,9 +902,21 @@
 		compatible = "nvidia,tegra30-hsuart";
 		status = "okay";
 
+		nvidia,adjust-baud-rates = <0 9600 100>,
+					   <9600 115200 200>,
+					   <1000000 4000000 136>;
+
 		/* Azurewave AW-NH615 BCM4329B1 */
 		bluetooth {
 			compatible = "brcm,bcm4329-bt";
+
+			max-speed = <4000000>;
+
+			clocks = <&tegra_pmc TEGRA_PMC_CLK_BLINK>;
+			clock-names = "txco";
+
+			vbat-supply  = <&vdd_3v3_sys>;
+			vddio-supply = <&vdd_1v8>;
 
 			device-wakeup-gpios = <&gpio TEGRA_GPIO(U, 1) GPIO_ACTIVE_HIGH>;	/* bt_ext_wake, out, lo	*/
 			host-wakeup-gpios =   <&gpio TEGRA_GPIO(U, 6) IRQ_TYPE_LEVEL_LOW>;	/* bt_host_wake, in, lo	*/
@@ -915,7 +927,6 @@
 	pwm@7000a000 {
 		status = "okay";
 	};
-
 
 	i2c@7000c000 {		/*i2c1*/
 		status = "okay";
@@ -1253,7 +1264,7 @@
 	pmc@7000e400 {
 		status = "okay";
 		nvidia,invert-interrupt;
-		nvidia,suspend-mode = <0>;
+		nvidia,suspend-mode = <1>;
 		nvidia,cpu-pwr-good-time = <2000>;
 		nvidia,cpu-pwr-off-time = <200>;
 		nvidia,core-pwr-good-time = <3845 3845>;
@@ -1269,6 +1280,18 @@
 			nvidia,reg-data = <0x81>;	// PWR_OFF_SET + DEV_OFF
 		};
 */
+	};
+
+	ahub@70080000 {
+		/* ALC5631 */
+		i2s@70080400 {		/* i2s1 */
+			status = "okay";
+		};
+
+		/* BT SCO */
+		i2s@70080600 {		/* i2s3 */
+			status = "okay";
+		};
 	};
 
 	brcm_wifi_pwrseq: wifi-pwrseq {
@@ -1327,6 +1350,30 @@
 		non-removable;
 	};
 
+	/* USB via ASUS connector */
+	usb@7d000000 {			/* usb1 */
+		compatible = "nvidia,tegra30-udc";
+		status = "okay";
+		dr_mode = "peripheral";
+	};
+
+	usb-phy@7d000000 {		/* phy1 */
+		status = "okay";
+		dr_mode = "peripheral";
+		nvidia,hssync-start-delay = <0>;
+		nvidia,xcvr-lsfslew = <2>;
+		nvidia,xcvr-lsrslew = <2>;
+	};
+
+	/* Dock's USB port */
+	usb@7d008000 {			/* usb3 */
+		status = "okay";		
+	}
+
+	usb-phy@7d008000 {		/* phy3 */
+		status = "okay";
+	}
+
 	backlight_lvds: backlight-lvds {
 		compatible = "pwm-backlight";
 
@@ -1355,20 +1402,20 @@
 
 	cpus {
 		cpu0: cpu@0 {
-			cpu-supply = <&vddctrl_reg>;
+			cpu-supply = <&vdd_cpu>;
 			operating-points-v2 = <&cpu0_opp_table>;
 			#cooling-cells = <2>;
 		};
 		cpu@1 {
-			cpu-supply = <&vddctrl_reg>;
+			cpu-supply = <&vdd_cpu>;
 			operating-points-v2 = <&cpu0_opp_table>;
 		};
 		cpu@2 {
-			cpu-supply = <&vddctrl_reg>;
+			cpu-supply = <&vdd_cpu>;
 			operating-points-v2 = <&cpu0_opp_table>;
 		};
 		cpu@3 {
-			cpu-supply = <&vddctrl_reg>;
+			cpu-supply = <&vdd_cpu>;
 			operating-points-v2 = <&cpu0_opp_table>;
 		};
 	};
@@ -1427,46 +1474,40 @@
 		};
 	};
 
-	pad-buttons {
+	gpio-keys {
 		compatible = "gpio-keys";
 		interrupt-parent = <&gpio>;
 
 		power {
 			label = "Power";
 			gpios = <&gpio TEGRA_GPIO(V, 0) GPIO_ACTIVE_LOW>;	/* KEY_POWER, in, hi */
-			interrupts = <TEGRA_GPIO(V, 0) IRQ_TYPE_EDGE_BOTH>;
 			linux,code = <KEY_POWER>;
 			debounce-interval = <10>;
+			wakeup-event-action = <EV_ACT_ASSERTED>;
 			wakeup-source;
 		};
 
 		volume-up {
 			label = "Volume Up";
 			gpios = <&gpio TEGRA_GPIO(Q, 2) GPIO_ACTIVE_LOW>;	/* KEY_VOLUMEUP, in, hi */
-			interrupts = <TEGRA_GPIO(Q, 2) IRQ_TYPE_EDGE_BOTH>;
 			linux,code = <KEY_VOLUMEUP>;
 			debounce-interval = <10>;
+			wakeup-event-action = <EV_ACT_ASSERTED>;
 			wakeup-source;
 		};
 
 		volume-down {
 			label = "Volume Down";
 			gpios = <&gpio TEGRA_GPIO(Q, 3) GPIO_ACTIVE_LOW>;	/* KEY_VOLUMEDOWN, in, hi */
-			interrupts = <TEGRA_GPIO(Q, 3) IRQ_TYPE_EDGE_BOTH>;
 			linux,code = <KEY_VOLUMEDOWN>;
 			debounce-interval = <10>;
+			wakeup-event-action = <EV_ACT_ASSERTED>;
 			wakeup-source;
 		};
-	};
-
-	extcon-keys {
-		compatible = "gpio-keys";
-		interrupt-parent = <&gpio>;
 
 		dock-hall-sensor {
 			label = "Lid";
 			gpios = <&gpio TEGRA_GPIO(S, 6) GPIO_ACTIVE_LOW>;	/* asusdec_hall_sensor, in, hi [open] */
-			interrupts = <TEGRA_GPIO(S, 6) IRQ_TYPE_EDGE_BOTH>;
 			linux,input-type = <EV_SW>;
 			linux,code = <SW_LID>;
 			debounce-interval = <10>;
@@ -1476,7 +1517,6 @@
 		ac-15v {
 			label = "Power adapter 15V";
 			gpios = <&gpio TEGRA_GPIO(H, 5) GPIO_ACTIVE_HIGH>;	/* LIMIT_SET1, in, lo [usb: pc] */
-			interrupts = <TEGRA_GPIO(H, 5) IRQ_TYPE_EDGE_BOTH>;
 			linux,input-type = <EV_SW>;
 			linux,code = <SW_DOCK>;
 			debounce-interval = <10>;
@@ -1486,7 +1526,6 @@
 		lineout-detect {
 			label = "Audio dock line-out detect";
 			gpios = <&gpio TEGRA_GPIO(X, 3) GPIO_ACTIVE_LOW>;	/* lineout_int, in, hi */
-			interrupts = <TEGRA_GPIO(X, 3) IRQ_TYPE_EDGE_BOTH>;
 			linux,input-type = <EV_SW>;
 			linux,code = <SW_LINEOUT_INSERT>;
 			debounce-interval = <10>;
@@ -1537,9 +1576,16 @@
 	thermal-zones {
 		nct72-local {
 			polling-delay-passive = <1000>; /* milliseconds */
-			polling-delay = <5000>; /* milliseconds */
+			polling-delay = <0>; /* milliseconds */
 
 			thermal-sensors = <&nct72 0>;
+		};
+
+		nct72-remote {
+			polling-delay-passive = <1000>; /* milliseconds */
+			polling-delay = <5000>; /* milliseconds */
+
+			thermal-sensors = <&nct72 1>;
 
 			trips {
 				trip0: cpu-alert0 {
@@ -1871,37 +1917,4 @@
 //		output-low;
 		output-high;
 	};
-};
-
-/* WM8903 */
-&tegra_i2s1 {
-	status = "okay";
-};
-
-/* BT SCO */
-&tegra_i2s3 {
-	status = "okay";
-};
-
-/* USB via ASUS connector */
-&usb1 {
-	compatible = "nvidia,tegra30-udc";
-	status = "okay";
-	dr_mode = "peripheral";
-};
-
-/* Dock's USB port */
-&usb3 {
-	status = "okay";
-};
-
-&phy1 {
-	status = "okay";
-	nvidia,hssync-start-delay = <0>;
-	nvidia,xcvr-lsfslew = <2>;
-	nvidia,xcvr-lsrslew = <2>;
-};
-
-&phy3 {
-	status = "okay";
 };
