@@ -1624,30 +1624,6 @@
 		i2c-parent = <&i2c2>;
 	};
 
-	cardhu-pcbid {
-		compatible = "nvidia,cardhu-pcbid";
-		pcbid-gpios =
-			<&gpio TEGRA_GPIO(K, 3) GPIO_ACTIVE_HIGH>,
-			<&gpio TEGRA_GPIO(J, 2) GPIO_ACTIVE_HIGH>,
-			<&gpio TEGRA_GPIO(J, 0) GPIO_ACTIVE_HIGH>,
-			<&gpio TEGRA_GPIO(Q, 5) GPIO_ACTIVE_HIGH>,
-			<&gpio TEGRA_GPIO(R, 2) GPIO_ACTIVE_HIGH>,
-			<&gpio TEGRA_GPIO(Q, 7) GPIO_ACTIVE_HIGH>,
-			<&gpio TEGRA_GPIO(Q, 4) GPIO_ACTIVE_HIGH>,
-			<&gpio TEGRA_GPIO(R, 5) GPIO_ACTIVE_HIGH>,
-			<&gpio TEGRA_GPIO(R, 4) GPIO_ACTIVE_HIGH>;
-		pcbid-ext-gpios = // used only if pcbid[5:3] == 6
-			<&gpio TEGRA_GPIO(R, 7) GPIO_ACTIVE_HIGH>,
-			<&gpio TEGRA_GPIO(B, 0) GPIO_ACTIVE_HIGH>,
-			<&gpio TEGRA_GPIO(J, 7) GPIO_ACTIVE_HIGH>,
-			<&gpio TEGRA_GPIO(C, 7) GPIO_ACTIVE_HIGH>;
-		ext-projectid-gpios = // used only if pcbid[5:3] == 6
-			<&gpio TEGRA_GPIO(K, 4) GPIO_ACTIVE_HIGH>,
-			<&gpio TEGRA_GPIO(I, 7) GPIO_ACTIVE_HIGH>,
-			<&gpio TEGRA_GPIO(I, 3) GPIO_ACTIVE_HIGH>,
-			<&gpio TEGRA_GPIO(K, 2) GPIO_ACTIVE_HIGH>;
-	};
-
 	/* Fixed regulstors must be reworked */
 	regulators {
 		compatible = "simple-bus";
