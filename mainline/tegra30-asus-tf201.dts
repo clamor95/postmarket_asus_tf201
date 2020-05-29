@@ -1188,14 +1188,14 @@
 				};
 
 				/* uSD slot VDD */
-				ldo2 {
+				vdd_usd: ldo2 {
 					regulator-name = "vdd_sata,avdd_plle";
 					regulator-min-microvolt = <1050000>;
 					regulator-max-microvolt = <1050000>;
 				};
 
 				/* uSD slot VDDIO */
-				ldo3 {
+				vddio_usd: ldo3 {
 					regulator-name = "vddio_usd";
 					regulator-min-microvolt = <1000000>;
 					regulator-max-microvolt = <3300000>;
@@ -1360,8 +1360,8 @@
 		cd-gpios = <&gpio TEGRA_GPIO(I, 5) GPIO_ACTIVE_LOW>;	// sdhci_cd, in, lo [card in]
 		bus-width = <4>;
 
-		vmmc-supply = <&ldo3_reg>;
-		vqmmc-supply = <&ldo2_reg>;
+		vmmc-supply = <&vddio_usd>;	/* ldo3 */
+		vqmmc-supply = <&vdd_usd>;	/* ldo2 */
 	};
 
 	/* internal SDIO WiFi */
