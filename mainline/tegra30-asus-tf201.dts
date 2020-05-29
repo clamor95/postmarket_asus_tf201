@@ -335,8 +335,8 @@
 			};
 			ulpi_stp_py3 {
 				nvidia,pins = "ulpi_stp_py3",
-						"ulpi_clk_py0",			/* UART4_TXD is reserved for UART debug */
-						"ulpi_dir_py1";			/* UART4_RXD is reserved for UART debug */
+						"ulpi_clk_py0",		/* UART4_TXD is reserved for UART debug */
+						"ulpi_dir_py1";		/* UART4_RXD is reserved for UART debug */
 				nvidia,function = "uartd";
 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
@@ -399,8 +399,7 @@
 
 			/* I2S4 pinmux */
 			pbb2 {
-				nvidia,pins = "pcc2",
-						"pbb7";
+				nvidia,pins = "pcc2", "pbb7";
 				nvidia,function = "i2s4";
 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
@@ -449,8 +448,8 @@
 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
 			};
 			gmi_a16_pj7 {
-				nvidia,pins = "gmi_a16_pj7",	//PCB_ID10
-						"gmi_a17_pb0";			//PCB_ID11
+				nvidia,pins = "gmi_a16_pj7",		//PCB_ID10
+						"gmi_a17_pb0";		//PCB_ID11
 				nvidia,function = "spi4";
 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
@@ -509,7 +508,7 @@
 						"lcd_sdout_pn5",
 						"lcd_pwr2_pc6",
 						"lcd_dc1_pd2",
-						"lcd_cs0_n_pn4";		/* bat detection */
+						"lcd_cs0_n_pn4";	/* bat detection */
 				nvidia,function = "displaya";
 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
@@ -526,13 +525,13 @@
 			/* KBC keys */
 			kb_col0_pq0 {
 				nvidia,pins = "kb_col0_pq0",
-						"kb_col1_pq1",			/* pad req */
-						"kb_row1_pr1",			/* USB charging control */
-						"kb_row3_pr3",			/* unknown */
-						"kb_row8_ps0",			/* power rails GPIO */
-						"kb_row10_ps2",			/* pad irq */
-						"kb_row14_ps6",			/* hall sensor */
-						"kb_row15_ps7";			/* dock irq */
+						"kb_col1_pq1",		/* pad req */
+						"kb_row1_pr1",		/* USB charging control */
+						"kb_row3_pr3",		/* unknown */
+						"kb_row8_ps0",		/* power rails GPIO */
+						"kb_row10_ps2",		/* pad irq */
+						"kb_row14_ps6",		/* hall sensor */
+						"kb_row15_ps7";		/* dock irq */
 				nvidia,function = "kbc";
 				nvidia,pull = <TEGRA_PIN_PULL_UP>;
 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
@@ -546,7 +545,7 @@
 						"kb_row4_pr4",
 						"kb_row5_pr5",
 						"kb_row7_pr7",
-						"kb_row12_ps4",			/* low bat detection */
+						"kb_row12_ps4",		/* low bat detection */
 						"kb_row13_ps5";
 				nvidia,function = "kbc";
 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
@@ -561,9 +560,9 @@
 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
 			};
 			pv0 {
-				nvidia,pins = "pv0",		/* power */
-						"kb_col2_pq2",		/* volup */
-						"kb_col3_pq3";		/* voldn */
+				nvidia,pins = "pv0",			/* power */
+						"kb_col2_pq2",		/* vol up */
+						"kb_col3_pq3";		/* vol down */
 				nvidia,function = "rsvd";
 				nvidia,pull = <TEGRA_PIN_PULL_UP>;
 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
@@ -571,8 +570,7 @@
 			};
 
 			sdmmc4_rst_n_pcc3 {
-				nvidia,pins = "sdmmc4_rst_n_pcc3",
-						"pu6";
+				nvidia,pins = "sdmmc4_rst_n_pcc3", "pu6";
 				nvidia,function = "rsvd1";
 				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
@@ -591,24 +589,23 @@
 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
 			};
 			gmi_iordy_pi5 {
-				nvidia,pins = "gmi_iordy_pi5",	/* usd-card detect */
-						"vi_d11_pt3",			/* sd-wp-gpio */
-						"pu4";					/* dock in detect */
+				nvidia,pins = "gmi_iordy_pi5",		/* usd-card detect */
+						"vi_d11_pt3",		/* sd-wp-gpio */
+						"pu4";			/* dock in detect */
 				nvidia,function = "rsvd1";
 				nvidia,pull = <TEGRA_PIN_PULL_UP>;
 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
 			};
 			vi_pclk_pt0 {
-				nvidia,pins = "vi_pclk_pt0";	/* reg */
+				nvidia,pins = "vi_pclk_pt0";		/* reg */
 				nvidia,function = "rsvd1";
 				nvidia,pull = <TEGRA_PIN_PULL_UP>;
 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
 			};
 			pv2 {
-				nvidia,pins = "pv2",
-						"pu1",
+				nvidia,pins = "pv2", "pu1",
 						"pu3";			/* docking thermal pwr control */
 				nvidia,function = "rsvd1";
 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
@@ -620,9 +617,7 @@
 						"vi_d10_pt2",
 						"vi_hsync_pd7",
 						"vi_vsync_pd6",
-						"pbb0",
-						"pu0",
-						"pu2";
+						"pbb0", "pu0", "pu2";
 				nvidia,function = "rsvd1";
 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
@@ -660,7 +655,7 @@
 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
 			};
 			gmi_ad8_ph0 {
-				nvidia,pins = "gmi_ad8_ph0";	/* LCD1_BL_PWM */
+				nvidia,pins = "gmi_ad8_ph0";		/* LCD1_BL_PWM */
 				nvidia,function = "pwm0";
 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
@@ -791,7 +786,7 @@
 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
 			};
 			pbb4 {
-				nvidia,pins = "pbb4";	/* Power rails GPIO */
+				nvidia,pins = "pbb4";			/* Power rails GPIO */
 				nvidia,function = "vgp4";
 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
@@ -824,7 +819,7 @@
 			/* Touch panel GPIO */
 			gmi_ad12_ph4 {
 				nvidia,pins = "gmi_cs7_n_pi6",
-						"gmi_ad12_ph4";			/* Touch IRQ */
+						"gmi_ad12_ph4";		/* Touch IRQ */
 				nvidia,function = "nand";
 				nvidia,pull = <TEGRA_PIN_PULL_UP>;
 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
@@ -833,7 +828,7 @@
 			gmi_ad10_ph2 {
 				nvidia,pins = "gmi_ad10_ph2",
 						"gmi_ad11_ph3",
-						"gmi_ad14_ph6",			/* Touch RESET */
+						"gmi_ad14_ph6",		/* Touch RESET */
 						"gmi_rst_n_pi4";
 				nvidia,function = "nand";
 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
