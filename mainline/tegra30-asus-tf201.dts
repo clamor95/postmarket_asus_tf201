@@ -41,31 +41,34 @@
 		#size-cells = <1>;
 		ranges;
 
-		firmware@bfe00000 {
-			// used by TF firmware
-			reg = <0xbfe00000 0x200000>;
-			no-map;
+		linux,cma@80000000 {
+			compatible = "shared-dma-pool";
+			alloc-ranges = <0x80000000 0x30000000>;
+			size = <0x10000000>; /* 256MiB */
+			linux,cma-default;
+			reusable;
 		};
 
 		ramoops@beb00000 {
 			compatible = "ramoops";
-			reg = <0xbeb00000 0x100000>;
-			record-size = <0x00020000>;
-			console-size = <0x00040000>;
-			ftrace-size = <0x00040000>;
+			reg = <0xbeb00000 0x10000>;	/* 64kB */
+			console-size = <0x8000>;	/* 32kB */
+			record-size = <0x400>;		/*  1kB */
 			ecc-size = <16>;
+		};
+
+		framebuffer@abc01000 {
+			reg = <0xabc01000 0x3e9000>;
+			no-map;
 		};
 
 		lp0_vec@bddf9000 {
 			reg = <0xbddf9000 0x2000>;	// passed from bootloader (ATAGS/NVIDIA, cmdline)
 		};
-/*
-		reserved@bddf6000 {
-			reg = <0xbddf6000 0x2000>;	// passed from bootloader (ATAGS/NVIDIA)
-		};
-*/
-		framebuffer@abc01000 {
-			reg = <0xabc01000 0x3e9000>;
+
+		trustzone@bfe00000 {
+			// used by TF firmware
+			reg = <0xbfe00000 0x200000>;	/* 2MB */
 			no-map;
 		};
 	};
@@ -89,6 +92,7 @@
 
 		hdmi@54280000 {
 			status = "okay";
+
 			hdmi-supply = <&vdd_5v0_sys>;
 			pll-supply = <&vdd_1v8>;
 			vdd-supply = <&vdd_3v3_sys>;
@@ -945,9 +949,13 @@
 		touchscreen@4d {
 			compatible = "atmel,maxtouch";
 			reg = <0x4d>;
+
 			interrupt-parent = <&gpio>;
 			interrupts = <TEGRA_GPIO(H, 4) IRQ_TYPE_EDGE_FALLING>;		/* touch_irq, in, hi */
 			reset-gpios = <&gpio TEGRA_GPIO(H, 6) GPIO_ACTIVE_LOW>;		/* touch_reset, out, hi */
+
+			avdd-supply = <&vdd_3v3_sys>;
+			vdd-supply  = <&vdd_3v3_sys>;
 		};
 
 		/* Nuvoton NPCE795LA0BX embedded controller */
@@ -1084,10 +1092,12 @@
 		status = "okay";
 		clock-frequency = <400000>;
 
+/*
 		/delete-property/ interrupts;
 		interrupts-extended = <&lic GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
 					  <&gpio TEGRA_GPIO(CC, 2) IRQ_TYPE_EDGE_FALLING>;	// temp_alert, in, hi	[LEVEL_LOW]
 		interrupt-names = "irq", "smbus_alert";
+*/
 
 		/* Realtek ALC5631 audio codec */
 		rt5631: rt5631@1a {
@@ -1467,6 +1477,8 @@
 
 		width-mm = <136>;			/* hsd101pww2 panel has same properties as */
 		height-mm = <217>;			/* hsd070pww1, only difference is physical size */
+
+		data-mapping = "jeida-24";
 
 		port {
 			panel_input: endpoint {
