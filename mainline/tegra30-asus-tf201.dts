@@ -963,7 +963,7 @@
 			compatible = "asus,pad-ec", "asus,ec";
 			reg = <0x15>;
 			interrupt-parent = <&gpio>;
-			interrupts = <TEGRA_GPIO(S, 2) IRQ_TYPE_LEVEL_LOW>;			/* asuspec_apwake, in, hi */
+			interrupts = <TEGRA_GPIO(S, 2) IRQ_TYPE_LEVEL_LOW>;		/* asuspec_apwake, in, hi */
 			request-gpio = <&gpio TEGRA_GPIO(Q, 1) GPIO_ACTIVE_LOW>;	/* asuspec_request, out, hi */
 			asus,dockram = <&dockram_pec>;
 
@@ -981,12 +981,24 @@
 		};
 	};
 
+	i2c_dock: dock-i2c {
+		compatible = "i2c-hotplug-gpio";
+
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		interrupts-extended = <&gpio TEGRA_GPIO(U, 4) IRQ_TYPE_EDGE_BOTH>;
+		detect-gpios = <&gpio TEGRA_GPIO(U, 4) GPIO_ACTIVE_LOW>;		/* asusdec_dock_in, in, lo [in-dock] */
+
+		i2c-parent = <&i2c2>;
+	};
+
 	&i2c_dock {
 		asusec@19 {
 			compatible = "asus,dock-ec", "asus,ec";
 			reg = <0x19>;
 			interrupt-parent = <&gpio>;
-			interrupts = <TEGRA_GPIO(S, 7) IRQ_TYPE_LEVEL_LOW>;			/* asusdec_input, in, hi */
+			interrupts = <TEGRA_GPIO(S, 7) IRQ_TYPE_LEVEL_LOW>;		/* asusdec_input, in, hi */
 			request-gpio = <&gpio TEGRA_GPIO(Q, 6) GPIO_ACTIVE_LOW>;	/* asusdec_request, out, hi */
 			asus,dockram = <&dockram_dec>;
 
@@ -1666,26 +1678,9 @@
 			};
 		};
 	};
-
-	i2c_dock: dock-i2c {
-		compatible = "i2c-hotplug-gpio";
-
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		interrupts-extended = <&gpio TEGRA_GPIO(U, 4) IRQ_TYPE_EDGE_BOTH>;
-		detect-gpios = <&gpio TEGRA_GPIO(U, 4) GPIO_ACTIVE_LOW>;		// asusdec_dock_in, in, lo [in-dock]
-
-		i2c-parent = <&i2c2>;
-	};
 };
 
 &gpio {
-	// gpios = <&gpio TEGRA_GPIO(G, 4) GPIO_ACTIVE_HIGH>;	// memory_bootstrap_ad4, in, hi
-	// gpios = <&gpio TEGRA_GPIO(G, 5) GPIO_ACTIVE_LOW>;	// memory_bootstrap_ad5, in, lo
-		//    1 0 = TF201_1GB_500MHZ
-		//    0 0 = TF201_Elpida_1GB_400MHz // all non 1 0 are TF201 Elpida 1GB 400MHz
-
 	usb_charge_limit {
 		gpio-hog;
 		gpios = <TEGRA_GPIO(R, 1) GPIO_ACTIVE_LOW>;	// LIMIT_SET0, out, lo; @tegra_udc.LIMIT_PWR [0 = 0.5A, 1 = 1A]
