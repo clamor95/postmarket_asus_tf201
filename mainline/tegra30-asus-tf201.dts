@@ -1098,24 +1098,9 @@
 		};
 	};
 
-/*
-	interrupt-parent = <&gpio>;
-	interrupts = <TEGRA_GPIO(S, 5) IRQ_TYPE_EDGE_BOTH>,	// dock_charging, in, lo
-		     <TEGRA_GPIO(S, 4) IRQ_TYPE_EDGE_BOTH>;	// low_battery_detect, in, lo
-		     <TEGRA_GPIO(N, 4) IRQ_TYPE_EDGE_BOTH>;	// battery_detect, in, lo
-	interrupt-names = "dock-charging", "low", "detect";
-*/
-
 	i2c@7000d000 {		/*i2c5*/
 		status = "okay";
 		clock-frequency = <400000>;
-
-/*
-		/delete-property/ interrupts;
-		interrupts-extended = <&lic GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
-					  <&gpio TEGRA_GPIO(CC, 2) IRQ_TYPE_EDGE_FALLING>;	// temp_alert, in, hi	[LEVEL_LOW]
-		interrupt-names = "irq", "smbus_alert";
-*/
 
 		/* Realtek ALC5631 audio codec */
 		rt5631: rt5631@1a {
@@ -1685,3 +1670,16 @@
 		};
 	};
 };
+
+/*
+	interrupt-parent = <&gpio>;
+	interrupts = <TEGRA_GPIO(S, 5) IRQ_TYPE_EDGE_BOTH>,	// dock_charging, in, lo
+		     <TEGRA_GPIO(S, 4) IRQ_TYPE_EDGE_BOTH>;	// low_battery_detect, in, lo
+		     <TEGRA_GPIO(N, 4) IRQ_TYPE_EDGE_BOTH>;	// battery_detect, in, lo
+	interrupt-names = "dock-charging", "low", "detect";
+
+	/delete-property/ interrupts;
+	interrupts-extended = <&lic GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
+				<&gpio TEGRA_GPIO(CC, 2) IRQ_TYPE_EDGE_FALLING>;	// temp_alert, in, hi	[LEVEL_LOW]
+	interrupt-names = "irq", "smbus_alert";
+*/
