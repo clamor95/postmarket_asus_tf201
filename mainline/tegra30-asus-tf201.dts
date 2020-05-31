@@ -102,6 +102,14 @@
 		};
 	};
 
+	gpio@6000d000 {
+		usb_charge_limit {
+			gpio-hog;
+			gpios = <TEGRA_GPIO(R, 1) GPIO_ACTIVE_LOW>;	// LIMIT_SET0, out, lo; @tegra_udc.LIMIT_PWR [0 = 0.5A, 1 = 1A]
+			output-high;
+		};
+	};
+
 	pinmux@70000868 {
 		pinctrl-names = "default";
 		pinctrl-0 = <&state_default>;
@@ -1675,14 +1683,5 @@
 				};
 			};
 		};
-	};
-};
-
-&gpio {
-	usb_charge_limit {
-		gpio-hog;
-		gpios = <TEGRA_GPIO(R, 1) GPIO_ACTIVE_LOW>;	// LIMIT_SET0, out, lo; @tegra_udc.LIMIT_PWR [0 = 0.5A, 1 = 1A]
-//		output-low;
-		output-high;
 	};
 };
