@@ -1320,14 +1320,14 @@
 		nvidia,core-power-req-active-high;
 		nvidia,sys-clock-req-active-high;
 		nvidia,lp0-vec = <0xbddf9000 0x2000>;	// passed by bootloader
-/*
+
+		/* Set DEV_OFF + PWR_OFF_SET bit in DCDC control register of TPS65911 PMIC  */
 		i2c-thermtrip {
-			nvidia,i2c-controller-id = <4>;	// i2c5
-			nvidia,bus-addr = <0x2d>;	// tps65911
-			nvidia,reg-addr = <0x3f>;	// DEVCTRL
-			nvidia,reg-data = <0x81>;	// PWR_OFF_SET + DEV_OFF
+			nvidia,i2c-controller-id = <4>;
+			nvidia,bus-addr = <0x2d>;
+			nvidia,reg-addr = <0x3f>;
+			nvidia,reg-data = <0x81>;
 		};
-*/
 	};
 
 	ahub@70080000 {
