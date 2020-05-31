@@ -981,7 +981,7 @@
 		};
 	};
 
-	i2c_dock: dock-i2c {
+	dock-i2c {
 		compatible = "i2c-hotplug-gpio";
 
 		#address-cells = <1>;
@@ -991,9 +991,7 @@
 		detect-gpios = <&gpio TEGRA_GPIO(U, 4) GPIO_ACTIVE_LOW>;		/* asusdec_dock_in, in, lo [in-dock] */
 
 		i2c-parent = <&i2c2>;
-	};
 
-	&i2c_dock {
 		asusec@19 {
 			compatible = "asus,dock-ec", "asus,ec";
 			reg = <0x19>;
