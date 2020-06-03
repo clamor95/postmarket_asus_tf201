@@ -120,19 +120,19 @@
 		};
 
 		gyro@68 {
-			mount-matrix =  "0", "-1",  "0",
+			mount-matrix =   "0", "-1",  "0",
 					"-1",  "0",  "0",
 					 "0",  "0", "-1";
 
 			i2c-gate {
 				accel: accel@f {
-					mount-matrix = "-1",  "0",  "0",
+					mount-matrix =  "-1",  "0",  "0",
 							 "0",  "1",  "0",
 							 "0",  "0", "-1";
 				};
 
 				compass: compass@e {
-					mount-matrix = "-1",  "0",  "0",
+					mount-matrix =  "-1",  "0",  "0",
 							 "0", "-1",  "0",
 							 "0",  "0", "-1";
 				};
@@ -245,6 +245,9 @@
 
 	memory-controller@7000f000 {
 		emc-timings-0 {
+			/* Elpida 1GB EDB8132B2MA-8D-F lpDDR2 */
+			nvidia,ram-code = <0>;
+
 			/* EMEM timings are common */
 			timing-25500000 {
 				clock-frequency = <25500000>;
@@ -286,8 +289,6 @@
 					0x02030001 0x00070506 0x71e40a07 0x001f0000 >;
 			};
 
-/*
-			nvidia,ram-code = <0>; /* Elpida 1GB EDB8132B2MA-8D-F lpDDR2 */
 			timing-400000000 {
 				clock-frequency = <400000000>;
 
@@ -297,9 +298,52 @@
 					0x00000001 0x00000000 0x00000004 0x00000004
 					0x04040001 0x000d090c 0x71c6120d 0x001f0000 >;
 			};
-*/
+		};
 
-			nvidia,ram-code = <2>; /* Unknown vendor lpDDR2 500MHz */
+		emc-timings-2 {
+			/* Unknown vendor lpDDR2 500MHz */
+			nvidia,ram-code = <2>;
+
+			timing-25500000 {
+				clock-frequency = <25500000>;
+
+				nvidia,emem-configuration = < 0x00020001 0x80000010
+					0x00000001 0x00000001 0x00000002 0x00000000
+					0x00000003 0x00000001 0x00000002 0x00000004
+					0x00000001 0x00000000 0x00000002 0x00000002
+					0x02020001 0x00060402 0x73e30303 0x001f0000 >;
+			};
+
+			timing-51000000 {
+				clock-frequency = <51000000>;
+
+				nvidia,emem-configuration = < 0x00010001 0x80000010
+					0x00000001 0x00000001 0x00000002 0x00000000
+					0x00000003 0x00000001 0x00000002 0x00000004
+					0x00000001 0x00000000 0x00000002 0x00000002
+					0x02020001 0x00060402 0x72c30303 0x001f0000 >;
+			};
+
+			timing-102000000 {
+				clock-frequency = <102000000>;
+
+				nvidia,emem-configuration = < 0x00000001 0x80000018
+					0x00000001 0x00000001 0x00000003 0x00000001
+					0x00000003 0x00000001 0x00000002 0x00000004
+					0x00000001 0x00000000 0x00000002 0x00000002
+					0x02020001 0x00060403 0x72430504 0x001f0000 >;
+			};
+
+			timing-204000000 {
+				clock-frequency = <204000000>;
+
+				nvidia,emem-configuration = < 0x00000003 0x80000025
+					0x00000001 0x00000001 0x00000006 0x00000003
+					0x00000005 0x00000001 0x00000002 0x00000004
+					0x00000001 0x00000000 0x00000003 0x00000002
+					0x02030001 0x00070506 0x71e40a07 0x001f0000 >;
+			};
+
 			timing-500000000 {
 				clock-frequency = <500000000>;
 
