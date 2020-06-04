@@ -1,7 +1,8 @@
-# Reference: <https://postmarketos.org/devicepkg>
+# Maintainer: Svyatoslav Ryhel <clamor95@gmail.com>
+
 pkgname=device-asus-tf201
 pkgdesc="Asus Transformer Prime TF201"
-pkgver=0.1
+pkgver=1
 pkgrel=0
 url="https://postmarketos.org"
 license="MIT"
@@ -9,8 +10,10 @@ arch="armv7"
 options="!check !archcheck"
 depends="postmarketos-base linux-asus-tf201 mkbootimg mesa-dri-gallium"
 makedepends="devicepkg-dev"
-subpackages="$pkgname-nonfree-firmware:nonfree_firmware"
-source="deviceinfo"
+subpackages="$pkgname-phosh
+	     $pkgname-nonfree-firmware:nonfree_firmware"
+source="deviceinfo
+	rootston.ini"
 
 build() {
 	devicepkg_build $startdir $pkgname
@@ -20,10 +23,16 @@ package() {
 	devicepkg_package $startdir $pkgname
 }
 
-nonfree_firmware() {
-	pkgdesc="Asus Transformer Prime TF201 WiFi"
-	depends="firmware-aosp-broadcom-wlan-mainline"
+phosh() {
+	install_if="$pkgname postmarketos-ui-phosh"
+	install -Dm644 "$srcdir"/rootston.ini \
+		"$subpkgdir"/etc/phosh/rootston.ini
+}
 
+nonfree_firmware() {
+	pkgdesc="Asus Transformer Prime TF201 WiFi & BT firmware"
+	depends="firmware-asus-tf201 firmware-aosp-broadcom-wlan-mainline"
+	install="$pkgname-nonfree_firmware.post-install $pkgname-nonfree_firmware.pre-deinstall"
 	mkdir "$subpkgdir"
 }
 
