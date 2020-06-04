@@ -1,45 +1,61 @@
-# Reference: <https://postmarketos.org/vendorkernel>
-# Kernel config based on: arch/arm/configs/(CHANGEME!)
+# Maintainer: Svyatoslav Ryhel <clamor95@gmail.com>
 
 pkgname=linux-asus-tf201
-pkgver=3.4.113
+pkgver=5.7.0
 pkgrel=0
-pkgdesc="Asus Transformer Prime TF201 kernel fork"
 arch="armv7"
-_carch="arm"
-_flavor="asus-tf201"
-url="https://kernel.org"
-license="GPL-2.0-only"
+pkgdesc="Asus Transformer Prime TF201 mainline kernel"
+url="https://postmarketos.org"
+makedepends="perl sed installkernel bash gmp-dev bc linux-headers elfutils-dev
+	     devicepkg-dev bison flex openssl-dev xz findutils"
 options="!strip !check !tracedeps pmb:cross-native"
-makedepends="bash bc bison devicepkg-dev flex openssl-dev perl"
+license="GPL-2.0-only"
 
 # Source
-_repository="android_kernel_nvidia_tegra3"
-_commit="ab549f58bc6349a3936fb5c656a4a7ded55ea64d"
+_flavor="asus-tf201"
+_repository="linux"
+_commit="9177678"
 _config="config-$_flavor.$arch"
+_carch="arm"
+_ksrcdir="$srcdir/linux-$_commit"
 source="
-	$pkgname-$_commit.tar.gz::https://github.com/clamor95/$_repository/archive/$_commit.tar.gz
+	$pkgname-$pkgver-$_commit.tar.gz::https://github.com/clamor95/$_repository/archive/$_commit.tar.gz
 	$_config
-	gcc7-give-up-on-ilog2-const-optimizations.patch
-	gcc8-fix-put-user.patch
-	kernel-use-the-gnu89-standard-explicitly.patch
 "
-builddir="$srcdir/$_repository-$_commit"
-_outdir="out"
 
 prepare() {
-	default_prepare
-	. downstreamkernel_prepare
+	mkdir -p "$srcdir"/build
+	cp -v "$srcdir"/$_config "$srcdir"/build/.config
+	make -C "$_ksrcdir" O="$srcdir"/build ARCH="$_carch" \
+		olddefconfig
 }
 
 build() {
+	cd "$srcdir"/build
 	unset LDFLAGS
-	make O="$_outdir" ARCH="$_carch" CC="${CC:-gcc}" \
-		KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-postmarketOS"
+	make ARCH="$_carch" CC="${CC:-gcc}" \
+		KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-Alpine"
 }
 
 package() {
-	downstreamkernel_package "$builddir" "$pkgdir" "$_carch" "$_flavor" "$_outdir"
+	install -Dm644 "$srcdir/build/arch/$_carch/boot/"*zImage \
+		"$pkgdir/boot/vmlinuz-$_flavor"
+
+	install -D "$srcdir/build/include/config/kernel.release" \
+		"$pkgdir/usr/share/kernel/$_flavor/kernel.release"
+
+	cd "$srcdir"/build
+
+	local _install
+	case "$CARCH" in
+	aarch64*|arm*)	_install="modules_install dtbs_install" ;;
+	*)		_install="modules_install" ;;
+	esac
+
+	make -j1 $_install \
+		ARCH="$_carch" \
+		INSTALL_MOD_PATH="$pkgdir" \
+		INSTALL_DTBS_PATH="$pkgdir/usr/share/dtb"
 }
 
 sha512sums="(run 'pmbootstrap checksum linux-asus-tf201' to fill)"
