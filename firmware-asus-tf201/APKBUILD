@@ -1,0 +1,22 @@
+# Maintainer: Svyatoslav Ryhel <clamor95@gmail.com>
+
+pkgname=firmware-asus-tf201
+pkgver=1
+pkgrel=1
+pkgdesc="Firmware for Transformer Prime (asus-tf201)"
+url="https://github.com/clamor95/linux-firmware"
+arch="armv7"
+license="custom:proprietary"
+options="!check !strip !archcheck !spdx"
+
+package() {
+	# Bluetooth
+	install -D -m644 "$srcdir"/BCM4329B1_002.002.023.0797.0879.hcd \
+		"$pkgdir"/lib/firmware/postmarketos/brcm/BCM4329B1.hcd
+
+	# Wi-Fi
+	install -D -m644 "$srcdir"/brcmfmac4329-sdio.asus,tf201.txt \
+		"$pkgdir"/lib/firmware/postmarketos/brcm/brcmfmac4329-sdio.asus,tf201.txt
+}
+
+sha512sums="(run 'pmbootstrap checksum firmware-asus-tf201' to fill)"
