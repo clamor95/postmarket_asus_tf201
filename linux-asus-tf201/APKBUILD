@@ -14,7 +14,7 @@ license="GPL-2.0-only"
 # Source
 _flavor="asus-tf201"
 _repository="linux"
-_commit="9177678"
+_commit="91776782ed6c65b644071a810b05f865cbc8ea05"
 _config="config-$_flavor.$arch"
 _carch="arm"
 _ksrcdir="$srcdir/linux-$_commit"
