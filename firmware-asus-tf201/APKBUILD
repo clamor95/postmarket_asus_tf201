@@ -8,6 +8,8 @@ url="https://github.com/clamor95/linux-firmware"
 arch="armv7"
 license="custom:proprietary"
 options="!check !strip !archcheck !spdx"
+source="BCM4329B1_002.002.023.0797.0879.hcd
+	brcmfmac4329-sdio.asus,tf201.txt"
 
 package() {
 	# Bluetooth
