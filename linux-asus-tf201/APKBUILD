@@ -1,7 +1,7 @@
 # Maintainer: Svyatoslav Ryhel <clamor95@gmail.com>
 
 pkgname=linux-asus-tf201
-pkgver=5.7.0
+pkgver=5.8.0
 pkgrel=0
 arch="armv7"
 pkgdesc="Asus Transformer Prime TF201 mainline kernel"
@@ -14,7 +14,7 @@ license="GPL-2.0-only"
 # Source
 _flavor="asus-tf201"
 _repository="linux"
-_commit="91776782ed6c65b644071a810b05f865cbc8ea05"
+_commit="35b50bc590ec10714a010d31cf5a07b162ced652"
 _config="config-$_flavor.$arch"
 _carch="arm"
 _ksrcdir="$srcdir/linux-$_commit"
