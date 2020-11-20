@@ -21,6 +21,7 @@ _ksrcdir="$srcdir/linux-$_commit"
 source="
 	$pkgname-$pkgver-$_commit.tar.gz::https://github.com/grate-driver/$_repository/archive/$_commit.tar.gz
 	$_config
+	01_tf201-dts-hotfixes.patch
 "
 
 prepare() {
