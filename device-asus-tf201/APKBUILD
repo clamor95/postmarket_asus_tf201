@@ -31,10 +31,8 @@ phosh() {
 
 nonfree_firmware() {
 	pkgdesc="Asus Transformer Prime TF201 WiFi & BT firmware"
-	depends="firmware-asus-tf201 firmware-aosp-broadcom-wlan-mainline"
-	install="$pkgname-nonfree_firmware.post-install $pkgname-nonfree_firmware.pre-deinstall"
+	depends="firmware-asus-tf201"
 	mkdir "$subpkgdir"
 }
-
 
 sha512sums="(run 'pmbootstrap checksum device-asus-tf201' to fill)"
