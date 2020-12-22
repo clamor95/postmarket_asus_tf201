@@ -31,7 +31,7 @@ phosh() {
 
 nonfree_firmware() {
 	pkgdesc="Asus Transformer Prime TF201 WiFi & BT firmware"
-	depends="firmware-asus-tf201 firmware-aosp-broadcom-wlan-mainline"
+	depends="firmware-asus-tf201"
 	mkdir "$subpkgdir"
 }
 
