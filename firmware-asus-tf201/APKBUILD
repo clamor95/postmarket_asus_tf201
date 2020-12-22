@@ -9,7 +9,8 @@ arch="armv7"
 license="custom:proprietary"
 options="!check !strip !archcheck !spdx"
 source="BCM4329B1_002.002.023.0797.0879.hcd
-	brcmfmac4329-sdio.asus,tf201.txt"
+	brcmfmac4329-sdio.asus,tf201.txt
+	brcmfmac4329-sdio.bin"
 
 package() {
 	# Bluetooth
@@ -17,6 +18,9 @@ package() {
 		"$pkgdir"/lib/firmware/postmarketos/brcm/BCM4329B1.hcd
 
 	# Wi-Fi
+	install -D -m644 "$srcdir"/brcmfmac4329-sdio.bin \
+		"$pkgdir"/lib/firmware/postmarketos/brcm/brcmfmac4329-sdio.bin
+
 	install -D -m644 "$srcdir"/brcmfmac4329-sdio.asus,tf201.txt \
 		"$pkgdir"/lib/firmware/postmarketos/brcm/brcmfmac4329-sdio.asus,tf201.txt
 }
