@@ -8,7 +8,7 @@ url="https://postmarketos.org"
 license="MIT"
 arch="armv7"
 options="!check !archcheck"
-depends="postmarketos-base linux-asus-tf201 mkbootimg mesa-dri-gallium xf86-video-opentegra"
+depends="postmarketos-base linux-asus-tf201 mkbootimg mesa-dri-gallium asus-transformer-blobtools xf86-video-opentegra"
 makedepends="devicepkg-dev"
 subpackages="$pkgname-phosh
 	     $pkgname-nonfree-firmware:nonfree_firmware"
